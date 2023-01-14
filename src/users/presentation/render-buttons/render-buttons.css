@@ -9,9 +9,14 @@ button {
     font-size: 14px;
     margin: 4px 2px;
     cursor: pointer;
+    transition: all 0.1s ease-in-out;
 }
 
 #current-page {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin: 20px;
+}
+
+button:hover {
+    background-color: rgb(163, 160, 160);
 }
