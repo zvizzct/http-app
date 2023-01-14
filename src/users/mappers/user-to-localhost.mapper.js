@@ -14,7 +14,6 @@ export const userModelToLocalhost = (user) => {
         isActive,
         lastName,
     } = user
-    console.log(avatar, balance, firstName, lastName);
 
     return ({
         avatar,

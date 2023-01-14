@@ -1,4 +1,5 @@
 import { loadUsersByPage } from "../use-cases/load-users-by-page"
+import { saveUser } from "../use-cases/save-user"
 
 const state = {
     currentPage: 0,
@@ -21,12 +22,33 @@ const loadPreviousPage = async () => {
 
 }
 
-const onUserChanged = () => {
-    throw new Error('Not implemented')
+/**
+ * 
+ * @param {User} user 
+ */
+const onUserChanged = (updatedUser) => {
+    let wasFound = false;
+    console.log(state.users[0].id);
+    state.users = state.users.map(user => {
+        if (user.id === updatedUser.id) {
+            wasFound = true
+            return updatedUser
+        }
+        return user
+    })
+    if (state.users.length < 10 && !wasFound) {
+        state.users.push(updatedUser)
+    }
 }
 
 const reloadPage = async () => {
-    throw new Error('Not implemented')
+    const users = await loadUsersByPage(state.currentPage)
+    if (users.length === 0) {
+        await loadPreviousPage()
+        return
+    }
+
+    state.users = users
 }
 
 export default {

@@ -1,3 +1,4 @@
+import { localhostUserToModel } from '../mappers/localhost-user.mapper.js'
 import { userModelToLocalhost } from '../mappers/user-to-localhost.mapper.js'
 import { User } from '../models/user.js'
 /**
@@ -8,12 +9,16 @@ export const saveUser = async (userLike) => {
     const user = new User(userLike)
     if (!user.firstName || !user.lastName) throw new Error('First name and last name are required')
     const userToSave = userModelToLocalhost(user)
-
+    let userUpdated;
     if (user.id) {
-        throw new Error('Not implemented')
+        userUpdated = await updateUser(userToSave)
+        console.log(userUpdated);
+    } else {
+
+        userUpdated = await createUser(userToSave)
     }
-    const updatedUser = await createUser(userToSave)
-    return updatedUser
+    return localhostUserToModel(userUpdated)
+
 }
 
 /**
@@ -23,14 +28,31 @@ export const saveUser = async (userLike) => {
 const createUser = async (user) => {
     const url = `${import.meta.env.VITE_BASE_URL}/users`
     const res = await fetch(url, {
-        method: 'POST',
+        method: 'PATCH',
+        body: JSON.stringify(user),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    const updatedUser = await res.json()
+    return updatedUser
+
+}
+
+/**
+ * 
+ * @param {Like<User>} user 
+ */
+const updateUser = async (user) => {
+    const url = `${import.meta.env.VITE_BASE_URL}/users/${user.id}`
+    const res = await fetch(url, {
+        method: 'PUT',
         body: JSON.stringify(user),
         headers: {
             'Content-Type': 'application/json'
         }
     })
     const newUser = await res.json()
-    console.log(newUser);
     return newUser
 
 }
